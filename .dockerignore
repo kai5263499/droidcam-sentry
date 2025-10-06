@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+droidcam-sentry
+*.pid
+
+# Logs and data
+logs/
+recordings/
+profiles/
+
+# Development files
+.golangci.yml
+Makefile
+
+# Documentation (included via docs/ in backend)
+*.md
+
+# IDE
+.vscode/
+.idea/
+
+# Test files
+*_test.go
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+*.swo

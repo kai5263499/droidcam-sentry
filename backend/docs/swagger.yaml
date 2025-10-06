@@ -1,0 +1,464 @@
+basePath: /
+definitions:
+  config.CameraConfig:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      motion_threshold:
+        type: number
+      name:
+        type: string
+      recording:
+        $ref: '#/definitions/config.RecordingConfig'
+      url:
+        type: string
+    type: object
+  config.HealthConfig:
+    properties:
+      check_interval_seconds:
+        type: integer
+      timeout_seconds:
+        type: integer
+    type: object
+  config.MotionConfig:
+    properties:
+      detection_interval_ms:
+        type: integer
+      min_area:
+        type: integer
+    type: object
+  config.RecordingConfig:
+    properties:
+      format:
+        type: string
+      path:
+        type: string
+      post_buffer_seconds:
+        type: integer
+      pre_buffer_seconds:
+        type: integer
+    type: object
+  config.ServerConfig:
+    properties:
+      host:
+        type: string
+      port:
+        type: integer
+    type: object
+  config.Snapshot:
+    properties:
+      cameras:
+        items:
+          $ref: '#/definitions/config.CameraConfig'
+        type: array
+      health:
+        $ref: '#/definitions/config.HealthConfig'
+      motion:
+        $ref: '#/definitions/config.MotionConfig'
+      server:
+        $ref: '#/definitions/config.ServerConfig'
+      storage:
+        $ref: '#/definitions/config.StorageConfig'
+    type: object
+  config.StorageConfig:
+    properties:
+      max_recording_size_mb:
+        type: integer
+      retention_days:
+        type: integer
+    type: object
+host: 192.168.2.149:8080
+info:
+  contact:
+    name: API Support
+    url: https://github.com/kai5263499/droidcam-sentry
+  description: Surveillance system API for controlling DroidCam IP cameras with motion
+    detection and recording
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: DroidCam Sentry API
+  version: 0.1.0
+paths:
+  /api/cameras:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/config.CameraConfig'
+            type: array
+      summary: List all cameras
+      tags:
+      - Cameras
+  /api/cameras/{name}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Camera name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update camera configuration
+      tags:
+      - Cameras
+  /api/cameras/live/{name}:
+    get:
+      parameters:
+      - description: Camera name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - multipart/x-mixed-replace
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Stream live MJPEG video
+      tags:
+      - Cameras
+  /api/cameras/start/{name}:
+    post:
+      parameters:
+      - description: Camera name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Start camera monitoring
+      tags:
+      - Cameras
+  /api/cameras/stop/{name}:
+    post:
+      parameters:
+      - description: Camera name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Stop camera monitoring
+      tags:
+      - Cameras
+  /api/config:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.Snapshot'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get or update configuration
+      tags:
+      - Configuration
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.Snapshot'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get or update configuration
+      tags:
+      - Configuration
+  /api/motion-detection/disable/{name}:
+    post:
+      parameters:
+      - description: Camera name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Disable motion detection
+      tags:
+      - Motion Detection
+  /api/motion-detection/enable/{name}:
+    post:
+      parameters:
+      - description: Camera name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Enable motion detection
+      tags:
+      - Motion Detection
+  /api/recordings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: List all recordings
+      tags:
+      - Recordings
+  /api/recordings/delete:
+    delete:
+      parameters:
+      - description: Recording file path
+        in: query
+        name: file
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete recording file
+      tags:
+      - Recordings
+  /api/recordings/download:
+    get:
+      parameters:
+      - description: Recording file path
+        in: query
+        name: file
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Download recording file
+      tags:
+      - Recordings
+  /api/recordings/play:
+    get:
+      parameters:
+      - description: Recording file path
+        in: query
+        name: file
+        required: true
+        type: string
+      produces:
+      - video/mp4
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Stream recording for playback
+      tags:
+      - Recordings
+  /api/status:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get system status
+      tags:
+      - System
+schemes:
+- http
+swagger: "2.0"
+tags:
+- description: Camera monitoring and control operations
+  name: Cameras
+- description: Recording control and playback operations
+  name: Recordings
+- description: System status and configuration
+  name: System

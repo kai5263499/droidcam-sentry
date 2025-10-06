@@ -1,0 +1,80 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  backend-lint:
+    name: Lint Backend (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          go mod download
+
+      - name: golangci-lint (non-OpenCV packages only)
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: latest
+          working-directory: backend
+          args: --timeout=5m --skip-dirs=pkg/camera,internal/motion,internal/recorder,internal/surveillance,internal/server
+
+  backend-test:
+    name: Test Backend (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          go mod download
+
+      - name: Run tests (non-OpenCV packages only)
+        run: |
+          cd backend
+          go test -v -race -coverprofile=coverage.out -covermode=atomic             ./internal/config             ./internal/health             ./internal/logger
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./backend/coverage.out
+          flags: backend
+          name: backend-coverage
+          fail_ci_if_error: false
+
+  frontend-lint:
+    name: Lint Frontend (JavaScript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ESLint
+        run: |
+          npm install -g eslint
+
+      - name: Lint JavaScript
+        run: |
+          cd frontend
+          eslint "**/*.js" || true

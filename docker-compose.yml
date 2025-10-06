@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  droidcam-sentry:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: droidcam-sentry
+    restart: unless-stopped
+    
+    ports:
+      - "8080:8080"   # Main API and Web UI
+      - "6060:6060"   # pprof/fgprof profiling (optional, comment out for production)
+    
+    volumes:
+      # Mount recordings directory (change host path as needed)
+      - ./recordings:/data/recordings
+      
+      # Mount config file
+      - ./backend/config.yaml:/app/config.yaml:ro
+      
+      # Optional: Mount logs directory
+      - ./logs:/data/logs
+      
+      # Optional: Mount profiles directory for performance profiling
+      - ./profiles:/data/profiles
+    
+    environment:
+      # Timezone (change to your timezone)
+      - TZ=America/New_York
+    
+    # Resource limits (adjust as needed)
+    deploy:
+      resources:
+        limits:
+          cpus: 2.0
+          memory: 2G
+        reservations:
+          cpus: 0.5
+          memory: 512M
+    
+    # Healthcheck
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    networks:
+      - sentry-network
+
+networks:
+  sentry-network:
+    driver: bridge
+
+# Example for QNAP NAS deployment:
+# 
+# 1. SSH into your QNAP and create directory structure:
+#    mkdir -p /share/Container/droidcam-sentry/recordings
+#    mkdir -p /share/Container/droidcam-sentry/logs
+#
+# 2. Copy project files to QNAP:
+#    scp -r droidcam-sentry/ admin@qnap:/share/Container/
+#
+# 3. Update volumes section above to use QNAP paths:
+#    - /share/Container/droidcam-sentry/recordings:/data/recordings
+#    - /share/Container/droidcam-sentry/logs:/data/logs
+#
+# 4. Deploy:
+#    docker-compose up -d
+#
+# 5. Access:
+#    Web UI: http://<qnap-ip>:8080
+#    Swagger: http://<qnap-ip>:8080/swagger/index.html

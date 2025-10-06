@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Camera Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #stream {
+            max-width: 100%;
+            max-height: 80vh;
+            border: 2px solid #333;
+            border-radius: 4px;
+            background: #000;
+        }
+        .error {
+            color: #ff6b6b;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .info {
+            color: #888;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title">DroidCam Live Feed</h1>
+    <img id="stream" alt="Live Camera Feed">
+    <div class="info" id="info">Connecting...</div>
+    <div id="error" class="error" style="display: none;"></div>
+
+    <script>
+        // Get camera name from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const cameraName = urlParams.get('camera') || 'unknown';
+        
+        // Update title
+        document.getElementById('title').textContent = `Live Feed: ${cameraName}`;
+        
+        // Set stream source
+        const img = document.getElementById('stream');
+        const streamUrl = `http://192.168.2.149:8080/api/cameras/live/${cameraName}`;
+        
+        // Add cache-busting parameter to prevent browser caching
+        img.src = streamUrl + '?t=' + new Date().getTime();
+        
+        let loadStartTime = Date.now();
+        let hasLoadedOnce = false;
+        
+        // Handle image load
+        img.onload = function() {
+            if (!hasLoadedOnce) {
+                hasLoadedOnce = true;
+                const loadTime = Date.now() - loadStartTime;
+                document.getElementById('info').textContent = `Connected (${loadTime}ms)`;
+                document.getElementById('error').style.display = 'none';
+                img.style.display = 'block';
+            }
+        };
+        
+        // Handle image load errors
+        img.onerror = function() {
+            const errorDiv = document.getElementById('error');
+            const infoDiv = document.getElementById('info');
+            
+            if (!hasLoadedOnce) {
+                errorDiv.textContent = `Failed to connect to ${cameraName}. Make sure the camera is running.`;
+                infoDiv.textContent = '';
+            } else {
+                errorDiv.textContent = `Connection lost to ${cameraName}. Attempting to reconnect...`;
+            }
+            
+            errorDiv.style.display = 'block';
+            
+            // Attempt to reconnect after 2 seconds
+            setTimeout(() => {
+                img.src = streamUrl + '?t=' + new Date().getTime();
+                loadStartTime = Date.now();
+            }, 2000);
+        };
+    </script>
+</body>
+</html>

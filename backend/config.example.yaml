@@ -1,0 +1,22 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+
+cameras:
+  - name: "droidcam-1"
+    url: "http://192.168.9.184:4747/video"
+    enabled: true
+    motion_threshold: 500000.0
+    recording:
+      path: "/home/wes/Downloads/droidcam-recordings"
+      format: "mp4"
+      pre_buffer_seconds: 5
+      post_buffer_seconds: 10
+
+motion:
+  detection_interval_ms: 100
+  min_area: 500
+
+storage:
+  max_recording_size_mb: 500
+  retention_days: 7

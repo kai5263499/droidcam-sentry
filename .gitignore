@@ -1,0 +1,52 @@
+# Binaries
+droidcam-sentry
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# Config files (sensitive)
+config.yaml
+*.pid
+
+# Logs
+logs/
+*.log
+
+# Recordings
+recordings/
+*.avi
+*.mp4
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+build/
+dist/
+profiles/
+
+# Swagger generated files (we'll regenerate)
+backend/docs/docs.go
+
+# Temporary files
+tmp/
+*.tmp
