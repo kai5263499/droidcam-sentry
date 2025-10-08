@@ -16,7 +16,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.24.6'
 
       - name: Install dependencies
         run: |
@@ -24,11 +24,8 @@ jobs:
           go mod download
 
       - name: golangci-lint (non-OpenCV packages only)
-        uses: golangci/golangci-lint-action@v7
-        with:
-          version: latest
-          working-directory: backend
-          args: --timeout=5m --skip-dirs=pkg/camera,internal/motion,internal/recorder,internal/surveillance,internal/server
+        run: |
+          ./scripts/run-golangci-lint.sh --timeout=5m
 
   backend-test:
     name: Test Backend (Go)
@@ -39,7 +36,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.24.6'
 
       - name: Install dependencies
         run: |

@@ -1,0 +1,23 @@
+version: "2"
+
+run:
+  timeout: 5m
+  skip-dirs:
+    - pkg/camera
+    - internal/motion
+    - internal/recorder
+    - internal/surveillance
+    - internal/server
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+    - revive
+    - unparam
+    - dupl
+    - goconst

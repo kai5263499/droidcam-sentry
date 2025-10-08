@@ -1,8 +1,14 @@
 # DroidCam Sentry
 
+
+![Droidcam Sentry UI](screenshot.png)
+
 [![Certified Shovelware](https://justin.searls.co/img/shovelware.svg)](https://justin.searls.co/shovelware/)  
+
 [![Lint](https://github.com/kai5263499/droidcam-sentry/actions/workflows/lint.yml/badge.svg)](https://github.com/kai5263499/droidcam-sentry/actions/workflows/lint.yml)
+
 [![codecov](https://codecov.io/gh/kai5263499/droidcam-sentry/branch/master/graph/badge.svg)](https://codecov.io/gh/kai5263499/droidcam-sentry)
+
 A motion-activated surveillance system that transforms old smartphones into intelligent security cameras using [DroidCam](https://www.droidcam.app/). This project enables a cost-effective home security solution by repurposing unused Android and iPhone devices.
 
 ## Why This Exists
